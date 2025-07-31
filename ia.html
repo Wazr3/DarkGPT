@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkGPT - IA</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="icon" href="/img/logodarkgpt.jpg" type="image/png">
+</head>
+<body class="ia-page">
+  <div class="bg-under-particles"></div>
+  <canvas id="particles-bg"></canvas>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <span class="neon-title">DarkGPT</span>
+    </div>
+    <div class="navbar-right">
+
+      <button class="settings-btn" title="Paramètres" aria-label="Paramètres">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5 15.4a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 8c.14.31.22.65.22 1v.09A1.65 1.65 0 0 0 21 12c0 .35-.08.69-.22 1z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  <div id="settings-modal" class="settings-modal" style="display:none;">
+
+    <div class="settings-content">
+      <h2 class="settings-title">Paramètres</h2>
+      <div class="settings-section">
+        <label for="mod-select">Mode IA :</label>
+        <select id="mod-select" class="settings-select">
+          <option value="classic">Classique</option>
+        </select>
+      </div>
+      <div class="settings-section">
+        <button class="settings-btn-action" id="new-discussion-btn">Nouvelle discussion</button>
+        <div id="settings-key-info" style="margin:18px 0 0 0; text-align:center; color:#ff003c; font-weight:bold;"></div>
+        <button class="settings-btn-action" id="logout-btn">Se déconnecter</button>
+        <button class="settings-btn-action" id="admin-panel-btn" style="display:none;">Panel Admin</button>
+        <div id="admin-panel" class="admin-panel" style="display:none;">
+          <h3 class="admin-title">Panel Admin</h3>
+          <div class="admin-users-list">
+            <!-- Utilisateurs fictifs pour la démo -->
+          </div>
+        </div>
+      </div>
+      <button class="settings-close" id="close-settings">✕</button>
+    </div>
+  </div>
+  <main class="chat-main">
+    <section class="chat-frame">
+      <div id="chat-messages" class="chat-messages">
+        <!-- Les messages du chat s'affichent ici -->
+      </div>
+    </section>
+    <section class="chat-input-bar">
+      <form class="chat-input-frame" id="chat-form" autocomplete="off">
+        <input type="text" id="chat-input" placeholder="Écris ton message..." autocomplete="off" />
+        <button type="submit" class="send-btn" title="Envoyer">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </svg>
+        </button>
+      </form>
+    </section>
+  </main>
+  <script src="assets/particles.js"></script>
+  <script src="assets/chat.js"></script>
+  <script>
+    // Ouvre/ferme la modale paramètres
+    document.querySelector('.settings-btn').onclick = function() {
+      document.getElementById('settings-modal').style.display = 'flex';
+      // Affiche la clé utilisée à chaque ouverture
+      const keyInfo = document.getElementById('settings-key-info');
+      if (keyInfo) {
+        let key = localStorage.getItem('darkgpt_licence') || localStorage.getItem('darkgpt_key') || 'Aucune';
+        keyInfo.textContent = `Clé utilisée : ${key}`;
+      }
+    };
+    document.getElementById('close-settings').onclick = function() {
+      document.getElementById('settings-modal').style.display = 'none';
+    };
+    // Fermer la modale si clic hors contenu
+    document.getElementById('settings-modal').onclick = function(e) {
+      if (e.target === this) this.style.display = 'none';
+    };
+    // Actions boutons (à compléter selon besoins)
+    // Nouvelle discussion = reset chat
+    document.getElementById('new-discussion-btn').onclick = function() {
+      window.open(window.location.pathname, '_blank');
+    };
+    // Paramètres modal
+    settingsBtn.onclick = function() {
+      settingsModal.style.display = 'block';
+      // Affiche la clé utilisée dans les paramètres
+      const keyInfo = document.getElementById('settings-key-info');
+      if (keyInfo) {
+        let key = localStorage.getItem('darkgpt_licence') || localStorage.getItem('darkgpt_key') || 'Aucune';
+        keyInfo.textContent = `Clé utilisée : ${key}`;
+      }
+      // Affiche le panel admin si admin
+      const adminKey = localStorage.getItem('darkgpt_licence');
+      if (adminKey === 'ADMIN-KEY-ULTRA') {
+        adminPanelBtn.style.display = 'inline-block';
+      } else {
+        adminPanelBtn.style.display = 'none';
+      }
+    };
+    // (Supprimé : bouton changer de licence)
+    document.getElementById('logout-btn').onclick = function() {
+      localStorage.clear();
+      setTimeout(function(){ window.location.replace('index.html'); }, 100);
+    };
+    // Notification modal
+    document.querySelector('.notification-btn').onclick = function() {
+      document.getElementById('notification-modal').style.display = 'block';
+      showNotifBadge(false);
+    };
+    document.getElementById('close-notif-modal').onclick = function() {
+      document.getElementById('notification-modal').style.display = 'none';
+    };
+    // Panel admin visible si licence admin
+    try {
+      const adminKeys = ["ADMIN-KEY-ULTRA"];
+      if (adminKeys.includes(localStorage.getItem('darkgpt_licence'))) {
+        document.getElementById('admin-panel-btn').style.display = 'block';
+      }
+    } catch(e){}
+    // Panel admin : affichage/fermeture
+    const adminPanelBtn = document.getElementById('admin-panel-btn');
+    const adminPanel = document.getElementById('admin-panel');
+    // Gestion persistante des bans (localStorage)
+    function getAdminUsers() {
+      // Utilisateurs fictifs pour la démo
+      return [
+        {key: '644G-56FG-57HG-FHF5', user: 'User1', since: '2025-07-01'},
+        {key: 'ADMIN-KEY-ULTRA', user: 'Admin', since: '2025-07-15'},
+        {key: '644G-56FG-57HG-FHF5', user: 'User2', since: '2025-06-10'},
+      ];
+    }
+    function getBannedKeys() {
+      try {
+        return JSON.parse(localStorage.getItem('darkgpt_banned_keys') || '[]');
+      } catch(e) { return []; }
+    }
+    function setBannedKeys(arr) {
+      localStorage.setItem('darkgpt_banned_keys', JSON.stringify(arr));
+    }
+    function renderAdminPanel() {
+      const users = getAdminUsers();
+      const banned = getBannedKeys();
+      const list = adminPanel.querySelector('.admin-users-list');
+      list.innerHTML = '';
+      users.forEach((u, i) => {
+        if (banned.includes(u.key)) return; // Ne pas afficher les bannis
+        const resetDate = new Date(u.since);
+        resetDate.setMonth(resetDate.getMonth() + 1);
+        const div = document.createElement('div');
+        div.className = 'admin-user-row';
+        div.innerHTML = `
+          <span class=\"admin-user\">${u.user}</span>
+          <span class=\"admin-key\">${u.key}</span>
+          <span class=\"admin-reset\">Reset : ${resetDate.toLocaleDateString()}</span>
+          <button class=\"admin-ban-btn\">Ban</button>
+          <button class=\"admin-del-btn\">Supprimer</button>
+        `;
+        // Ban
+        div.querySelector('.admin-ban-btn').onclick = function() {
+          let bannedNow = getBannedKeys();
+          if (!bannedNow.includes(u.key)) {
+            bannedNow.push(u.key);
+            setBannedKeys(bannedNow);
+          }
+          div.remove();
+        };
+        // Supprimer (juste retire de la vue, pas ban)
+        div.querySelector('.admin-del-btn').onclick = function() {
+          div.remove();
+        };
+        list.appendChild(div);
+      });
+    }
+    adminPanelBtn.onclick = function() {
+      if (adminPanel.style.display === 'block') {
+        adminPanel.style.display = 'none';
+      } else {
+        renderAdminPanel();
+        adminPanel.style.display = 'block';
+      }
+    };
+  </script>
+</body>
+</html>
